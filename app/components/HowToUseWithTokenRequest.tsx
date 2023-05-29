@@ -1,16 +1,20 @@
-import { getAPIKey, setAPIKey } from 'AutoGPT/utils/apiKey';
+import { getAPIKey, setAPIKey, getAPIBaseURL, setAPIBaseURL } from 'AutoGPT/utils/apiKey';
 import { useAIStateDispatcher } from './AIStateProvider';
 import { useCallback, useRef } from 'react';
+import { stringify } from 'querystring';
 
 export function HowToUseWithTokenRequest() {
   const { setupDispatcher } = useAIStateDispatcher();
   const tokenRef = useRef<HTMLInputElement>(null);
+  const baseURLRef = useRef<HTMLInputElement>(null);
   const onSaveClicked = useCallback(() => {
     if (tokenRef.current?.value) {
       setAPIKey(tokenRef.current?.value);
     }
-
-    if (getAPIKey()) {
+    if (baseURLRef.current?.value) {
+      setAPIBaseURL(baseURLRef.current?.value);
+    }
+    if (getAPIKey() && getAPIBaseURL()) {
       // Only go to next stage if there is an API key present
       setupDispatcher("next_stage");
     }
@@ -62,7 +66,22 @@ export function HowToUseWithTokenRequest() {
               name="token"
               id="token"
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              placeholder={getAPIKey() ?? "sk-1234..."}
+              placeholder={"sk-1234..."}
+              defaultValue={getAPIKey()?.toString()}
+            />
+          </div>
+          <div className="sm:w-full sm:max-w-2xl">
+            <label htmlFor="url" className="sr-only">
+              Base URL
+            </label>
+            <input
+              ref={baseURLRef}
+              type="text"
+              name="token"
+              id="token"
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              placeholder={"https://api.openai.com/v1 or http://localhost:8080/v1"}
+              defaultValue={getAPIBaseURL()?.toString()}
             />
           </div>
           <button

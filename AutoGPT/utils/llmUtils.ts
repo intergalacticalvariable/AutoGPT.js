@@ -1,4 +1,4 @@
-import { getAPIKey } from './apiKey';
+import { getAPIKey, getAPIBaseURL } from './apiKey';
 import type { LLMMessage, LLMModel } from './types';
 
 export async function callLLMChatCompletion(
@@ -15,12 +15,13 @@ export async function callLLMChatCompletion(
   };
 
   const apiKey = getAPIKey();
+  const apiBaseURL = getAPIBaseURL(); // https://api.openai.com/v1
   const headers = new Headers();
   headers.set("Authorization", `Bearer ${apiKey}`);
   headers.set("Content-Type", "application/json");
   headers.set("Accept", "application/json");
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch(apiBaseURL + "/chat/completions", {
     method: "POST",
     headers,
     body: JSON.stringify(reqBody),
